@@ -1,0 +1,4 @@
+DB tables:
+1. User info. user id, name, surname
+2. user_id, grade, rate per hour
+3. user_id, hours per day

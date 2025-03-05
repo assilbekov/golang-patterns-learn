@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:15.3-alpine
+    pull_policy: if_not_present
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: test
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  tracker:
+    build:
+      context: .
+      dockerfile: ./tracker/Dockerfile
+    pull_policy: if_not_present
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - DB_URL=postgres://root:qwerty@postgres:5432/test?sslmode=disable
+
+volumes:
+  postgres_data:
