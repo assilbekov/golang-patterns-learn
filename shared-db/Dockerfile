@@ -6,8 +6,10 @@ COPY . .
 
 RUN go mod download
 
-RUN go build -o tracker ./main.go
+RUN go build -o app tracker/main.go
 
 EXPOSE 8080
 
-CMD ["./tracker"]
+RUN chmod +x app
+
+CMD ["/app/app"]
