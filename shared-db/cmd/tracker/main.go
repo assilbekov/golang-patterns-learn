@@ -1,7 +1,6 @@
 package main
 
 import (
-	"shared-db/api"
 	"shared-db/conf"
 	"shared-db/db"
 	"shared-db/internal/tracker"
@@ -14,12 +13,13 @@ func main() {
 	// 2. Get DB
 	d := db.New(c)
 
-	// 3. api
-	a := api.New(d, c)
+	// 3. Apply migrations
+	if err := d.Migrate(); err != nil {
+		panic("failed to run migrations: " + err.Error())
+	}
 
-	// 4. init route
-	a.InitRoute("/tracker", tracker.GetTracker)
+	t := tracker.New(d, c)
 
-	// 5. start api
-	a.Start()
+	// 4. start api
+	t.Start()
 }

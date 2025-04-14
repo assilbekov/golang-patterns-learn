@@ -30,4 +30,10 @@ func New(conf *conf.Config) *DB {
 	}
 }
 
-
+func (d *DB) Migrate() error {
+	// Define models to auto-migrate
+	if err := d.db.AutoMigrate(&User{}, &UserGrade{}, &UserWorkHours{}); err != nil {
+		return fmt.Errorf("failed to migrate database: %w", err)
+	}
+	return nil
+}
