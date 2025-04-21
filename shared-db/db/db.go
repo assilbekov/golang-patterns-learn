@@ -37,3 +37,11 @@ func (d *DB) Migrate() error {
 	}
 	return nil
 }
+
+func (d *DB) GetUser(id uint) (*User, error) {
+	var user User
+	if err := d.db.First(&user, id).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

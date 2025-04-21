@@ -16,12 +16,15 @@ type Tracker struct {
 func New(db *db.DB, conf *conf.Config) *Tracker {
 	mux := http.NewServeMux()
 
-	// 4. api
-	a := api.New(db, conf, mux)
+	a := api.New(conf, mux)
 
+	t := &Tracker{db: db, conf: conf, api: a}
 
-	// 5. init route
-	tracker.InitRoute(mux)
+	t.InitRoute(mux)
 
-	return &Tracker{db: db, conf: conf, api: a}
+	return t
+}
+
+func (t *Tracker) Start() error {
+	return t.api.Start()
 }
