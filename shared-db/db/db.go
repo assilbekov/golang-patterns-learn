@@ -32,10 +32,18 @@ func New(conf *conf.Config) *DB {
 
 func (d *DB) Migrate() error {
 	// Define models to auto-migrate
-	if err := d.db.AutoMigrate(&User{}, &UserGrade{}, &UserWorkHours{}); err != nil {
+	if err := d.db.AutoMigrate(&User{}, &UserWorkHours{}); err != nil {
 		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 	return nil
+}
+
+func (d *DB) GetUsers() ([]User, error) {
+	var users []User
+	if err := d.db.Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
 func (d *DB) GetUser(id uint) (*User, error) {
@@ -44,4 +52,28 @@ func (d *DB) GetUser(id uint) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (d *DB) CreateUser(user *User) error {
+	return d.db.Create(user).Error
+}
+
+func (d *DB) UpdateUser(user *User) error {
+	return d.db.Model(&User{}).Where("id = ?", user.ID).Updates(user).Error
+}
+
+func (d *DB) GetUserWorkHours(id uint) (*UserWorkHours, error) {
+	var userWorkHours UserWorkHours
+	if err := d.db.First(&userWorkHours, id).Error; err != nil {
+		return nil, err
+	}
+	return &userWorkHours, nil
+}
+
+func (d *DB) CreateUserWorkHours(userWorkHours *UserWorkHours) error {
+	return d.db.Create(userWorkHours).Error
+}
+
+func (d *DB) UpdateUserWorkHours(userWorkHours *UserWorkHours) error {
+	return d.db.Model(&UserWorkHours{}).Where("id = ?", userWorkHours.ID).Updates(userWorkHours).Error
 }
